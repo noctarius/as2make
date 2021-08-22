@@ -45,6 +45,7 @@ var (
 	toolchainPrefix = flag.String("toolchain-prefix", "-", "--toolchain-prefix=<CROSS_COMPILE>")
 	cmsisSdkPath    = flag.String("cmsis-sdk", "-", "--cmsis-sdk=<path_to_cmsis_dir>")
 	dfpSdkPath      = flag.String("dfp-sdk", "-", "--dfp-sdk=<path_to_dfp_dir>")
+	outputName      = flag.String("output-name", "build", "--output-name=<outputname>")
 )
 
 func init() {
@@ -67,6 +68,7 @@ type Build struct {
 	optimizationLevel string
 	deviceDefine      string
 	coreSpecification string
+	outputName        string
 }
 
 func NewBuild() (Build, error) {
@@ -139,7 +141,15 @@ func NewBuild() (Build, error) {
 		optimizationLevel: optimizationLevel(release.ToolchainSettings),
 		deviceDefine:      device.Compile.Define,
 		coreSpecification: device.Processor.Dcore,
+		outputName:        *outputName,
 	}, nil
+}
+
+func (b Build) OutputName(ext string) string {
+	if strings.HasPrefix(ext, ".") {
+		ext = ext[1:]
+	}
+	return fmt.Sprintf("%s.%s", b.outputName, ext)
 }
 
 func (b Build) Sources() []File {

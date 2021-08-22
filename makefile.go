@@ -51,8 +51,8 @@ func writeMakefile(build builder.Build) {
 	write(file, "LIB_DEP :=\n")
 	write(file, "USER_OBJS :=\n")
 	write(file, "OUTPUT_FILE_PATH :=\n")
-	write(file, "OUTPUT_FILE_PATH +=build.elf\n")
-	write(file, "OUTPUT_FILE_PATH_AS_ARGS +=build.elf\n")
+	write(file, "OUTPUT_FILE_PATH +=%s\n", build.OutputName("elf"))
+	write(file, "OUTPUT_FILE_PATH_AS_ARGS +=%s\n", build.OutputName("elf"))
 	write(file, "OUTPUT_FILE_DEP:= ./makedep.mk\n\n")
 
 	writeSubdirsFiles(build, file)
@@ -208,68 +208,52 @@ func writeCompileTarget(build builder.Build, file *os.File) {
 	write(file, "$(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)\n")
 	write(file, "\t@echo Building target: $@\n")
 	write(file, "\t%s", gcc)
-	write(file, " -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -mthumb -Wl,-Map=\"build.map\" --specs=nano.specs -Wl,--start-group -lm  -Wl,--end-group -L\"./Device_Startup\"  -Wl,--gc-sections -mcpu=cortex-m0plus -Tsamd21g18a_flash.ld\n")
+	write(file, " -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -mthumb -Wl,-Map=\"%s\" --specs=nano.specs -Wl,--start-group -lm  -Wl,--end-group -L\"./Device_Startup\"  -Wl,--gc-sections -mcpu=%s -Tsamd21g18a_flash.ld\n", build.OutputName("map"), build.CoreSpecification())
 	if build.WithHex() {
 		write(file, "\t%s", objCopy)
-		write(file, " -O ihex -R .eeprom -R .fuse -R .lock -R .signature  \"build.elf\" \"build.hex\"\n")
+		write(file, " -O ihex -R .eeprom -R .fuse -R .lock -R .signature  \"%s\" \"%s\"\n", build.OutputName("elf"), build.OutputName("hex"))
 	}
 	if build.WithLss() {
 		write(file, "\t%s", objDump)
-		write(file, " -h -S \"build.elf\" > \"build.lss\"\n")
+		write(file, " -h -S \"%s\" > \"%s\"\n", build.OutputName("elf"), build.OutputName("lss"))
 	}
 	if build.WithEep() {
 		write(file, "\t%s", objCopy)
-		write(file, " -j .eeprom --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0 --no-change-warnings -O binary \"build.elf\" \"build.eep\" || exit 0\n")
+		write(file, " -j .eeprom --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0 --no-change-warnings -O binary \"%s\" \"%s\" || exit 0\n", build.OutputName("elf"), build.OutputName("eep"))
 	}
 	if build.WithBin() {
 		write(file, "\t%s", objCopy)
-		write(file, " -O binary \"build.elf\" \"build.bin\"\n")
+		write(file, " -O binary \"%s\" \"%s\"\n", build.OutputName("elf"), build.OutputName("bin"))
 	}
 	if build.WithSrec() {
 		write(file, "\t%s", objCopy)
-		write(file, " -O srec -R .eeprom -R .fuse -R .lock -R .signature  \"build.elf\" \"build.srec\"\n")
+		write(file, " -O srec -R .eeprom -R .fuse -R .lock -R .signature  \"%s\" \"%s\"\n", build.OutputName("elf"), build.OutputName("srec"))
 	}
 	write(file, "\t%s", size)
-	write(file, " \"build.elf\"\n")
+	write(file, " \"%s\"\n", build.OutputName("elf"))
 	write(file, "\t@echo Finished successfully: $@\n\n")
 }
 
 func writeCleanTarget(build builder.Build, file *os.File) {
 	write(file, "clean:\n")
-	if _, err := file.WriteString("\t-rm -rf $(OBJS_AS_ARGS) $(EXECUTABLES)\n"); err != nil {
-		panic(err)
-	}
-	if _, err := file.WriteString("\t-rm -rf $(C_DEPS_AS_ARGS)\n"); err != nil {
-		panic(err)
-	}
+	write(file, "\t-rm -rf $(OBJS_AS_ARGS) $(EXECUTABLES)\n")
+	write(file, "\t-rm -rf $(C_DEPS_AS_ARGS)\n")
 	if build.WithHex() {
-		if _, err := file.WriteString("\t-rm -rf build.hex\n"); err != nil {
-			panic(err)
-		}
+		write(file, "\t-rm -rf %s\n", build.OutputName("hex"))
 	}
 	if build.WithLss() {
-		if _, err := file.WriteString("\t-rm -rf build.lss\n"); err != nil {
-			panic(err)
-		}
+		write(file, "\t-rm -rf %s\n", build.OutputName("lss"))
 	}
 	if build.WithEep() {
-		if _, err := file.WriteString("\t-rm -rf build.eep\n"); err != nil {
-			panic(err)
-		}
+		write(file, "\t-rm -rf %s\n", build.OutputName("eep"))
 	}
 	if build.WithBin() {
-		if _, err := file.WriteString("\t-rm -rf build.bin\n"); err != nil {
-			panic(err)
-		}
+		write(file, "\t-rm -rf %s\n", build.OutputName("bin"))
 	}
 	if build.WithSrec() {
-		if _, err := file.WriteString("\t-rm -rf build.srec\n"); err != nil {
-			panic(err)
-		}
+		write(file, "\t-rm -rf %s\n", build.OutputName("srec"))
 	}
-	if _, err := file.WriteString("\t-rm -rf build.elf build.a build.map\n"); err != nil {
-		panic(err)
-	}
+	write(file, "\t-rm -rf %s %s %s\n", build.OutputName("elf"), build.OutputName("a"), build.OutputName("map"))
 }
 
 func buildCommand(build builder.Build) string {
