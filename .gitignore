@@ -4,3 +4,4 @@ Makefile
 Makefile.gen
 makedep.mk
 *.pdsc
+as2make
