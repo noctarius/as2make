@@ -36,7 +36,7 @@ import (
 )
 
 func main() {
-	f, err := os.Open("test.cproj")
+	f, err := os.Open("Atmel.SAMD21_DFP.pdsc")
 	if err != nil {
 		panic(err)
 	}
@@ -47,6 +47,12 @@ func main() {
 	}
 	f.Close()
 
+	mxj.XmlCharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
+		if charset == "ASCII" {
+			return input, nil
+		}
+		return nil, fmt.Errorf("illegal charset: %s", charset)
+	}
 	elements, err := mxj.NewMapXml(content)
 	if err != nil {
 		panic(err)
@@ -59,12 +65,12 @@ func main() {
 	}
 	nodes = append(nodes, n...)
 
-	f, err = os.OpenFile("types/generated.go", os.O_RDWR|os.O_CREATE, os.ModePerm)
+	f, err = os.OpenFile("dfp/generated.go", os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
 
-	if _, err := f.WriteString("package types\n\n"); err != nil {
+	if _, err := f.WriteString("package dfp\n\n"); err != nil {
 		panic(err)
 	}
 
@@ -230,6 +236,11 @@ func parseElement(node *Element, element map[string]interface{}) error {
 			} else {
 				attribute.datatype = guessDatatype(value.(string), attribute.datatype)
 			}
+			continue
+		} else if key == "#text" {
+			// inline value
+			node.inline = true
+			node.datatype = guessDatatype(value.(string), node.datatype)
 			continue
 		}
 

@@ -26,6 +26,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/clevabit/as2make/builder"
 	"os"
 )
@@ -33,9 +34,11 @@ import (
 func writeMakedepMk(build builder.Build) {
 	fi, _ := os.Stat("makedep.mk")
 	if fi != nil {
+		fmt.Printf("Found old makedep.mk, deleting ...\n")
 		os.Remove("makedep.mk")
 	}
 
+	fmt.Printf("Generating makedep.mk ...\n")
 	file, err := os.OpenFile("makedep.mk", os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		panic(err)

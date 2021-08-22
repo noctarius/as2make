@@ -35,9 +35,11 @@ import (
 func writeMakefile(build builder.Build) {
 	fi, _ := os.Stat("Makefile.gen")
 	if fi != nil {
+		fmt.Printf("Found old Makefile.gen, deleting ...\n")
 		os.Remove("Makefile.gen")
 	}
 
+	fmt.Printf("Generating Makefile.gen ...\n")
 	file, err := os.OpenFile("Makefile.gen", os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		panic(err)
@@ -275,11 +277,22 @@ func buildCommand(build builder.Build) string {
 	includes := build.IncludePaths()
 	symbols := build.DefSymbols()
 	opLevel := build.OptimizationLevel()
+	deviceDefine := fmt.Sprintf("-D%s", build.DeviceDefine())
+	coreSpec := fmt.Sprintf("-mcpu=%s", build.CoreSpecification())
+
+	warnAll := ""
+	if build.WithWarningAll() {
+		warnAll = "-Wall"
+	}
+
 	return fmt.Sprintf(
-		"%s -x c -mthumb -D__SAMD21G18A__ %s %s %s -ffunction-sections -mlong-calls -Wall -mcpu=cortex-m0plus -c -std=gnu99 -MD -MP -MF \"$(@:%%.o=%%.d)\" -MT\"$(@:%%.o=%%.d)\" -MT\"$(@:%%.o=%%.o)\" -o \"$@\" \"$<\" ",
+		"%s -x c -mthumb %s %s %s %s -ffunction-sections -mlong-calls %s %s -c -std=gnu99 -MD -MP -MF \"$(@:%%.o=%%.d)\" -MT\"$(@:%%.o=%%.d)\" -MT\"$(@:%%.o=%%.o)\" -o \"$@\" \"$<\" ",
 		toolchain.Executable("gcc"),
+		deviceDefine,
 		strings.Join(symbols, " "),
 		strings.Join(includes, " "),
 		opLevel,
+		warnAll,
+		coreSpec,
 	)
 }

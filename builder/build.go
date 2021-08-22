@@ -58,12 +58,15 @@ type Build struct {
 	sources           []File
 	ldSources         []File
 	subdirs           []string
+	settings          types.PropertyGroup
 	release           types.PropertyGroup
 	includePaths      []string
 	defSymbols        []string
 	cmsis             cmsis.SDK
 	dfp               dfp.SDK
 	optimizationLevel string
+	deviceDefine      string
+	coreSpecification string
 }
 
 func NewBuild() (Build, error) {
@@ -102,12 +105,22 @@ func NewBuild() (Build, error) {
 		return Build{}, fmt.Errorf("no release configuration found")
 	}
 
+	settings, found := findProjectSettings(project)
+	if !found {
+		return Build{}, fmt.Errorf("no project settings configuration found")
+	}
+
 	cmsis, err := cmsis.New(*cmsisSdkPath)
 	if err != nil {
 		return Build{}, err
 	}
 
 	dfp, err := dfp.New(*dfpSdkPath)
+	if err != nil {
+		return Build{}, err
+	}
+
+	device, err := dfp.Device(settings.Avrdevice.Content)
 	if err != nil {
 		return Build{}, err
 	}
@@ -119,10 +132,13 @@ func NewBuild() (Build, error) {
 		sources:           sources,
 		subdirs:           subdirs,
 		ldSources:         ldSources,
+		settings:          settings,
 		release:           release,
 		includePaths:      includePaths(release.ToolchainSettings, cmsis, dfp),
 		defSymbols:        defSymbols(release.ToolchainSettings),
 		optimizationLevel: optimizationLevel(release.ToolchainSettings),
+		deviceDefine:      device.Compile.Define,
+		coreSpecification: device.Processor.Dcore,
 	}, nil
 }
 
@@ -172,6 +188,20 @@ func (b Build) WithBin() bool {
 
 func (b Build) WithSrec() bool {
 	return b.release.ToolchainSettings.ArmGcc.ArmgccCommonOutputfilesSrec.Content
+}
+
+func (b Build) WithWarningAll() bool {
+	return b.release.ToolchainSettings.ArmGcc.ArmgccCompilerWarningsAllWarnings.Content
+}
+
+func (b Build) DeviceDefine() string {
+	return b.deviceDefine
+}
+
+func (b Build) CoreSpecification() string {
+	core := strings.ToLower(b.coreSpecification)
+	core = strings.Replace(core, "+", "plus", -1)
+	return core
 }
 
 func findSubdirs(project types.Project, projectDir string) ([]string, error) {
@@ -243,6 +273,8 @@ func findLinkerSources(project types.Project, projectDir string) ([]File, error)
 }
 
 func loadProject(projectFile string) (types.Project, error) {
+	fmt.Printf("Loading project file: %s ...\n", projectFile)
+
 	f, err := os.Open(projectFile)
 	if err != nil {
 		return types.Project{}, err
@@ -264,6 +296,15 @@ func loadProject(projectFile string) (types.Project, error) {
 func findRelease(project types.Project) (types.PropertyGroup, bool) {
 	for _, propertyGroup := range project.PropertyGroups {
 		if strings.Contains(propertyGroup.Condition, "Release") {
+			return propertyGroup, true
+		}
+	}
+	return types.PropertyGroup{}, false
+}
+
+func findProjectSettings(project types.Project) (types.PropertyGroup, bool) {
+	for _, propertyGroup := range project.PropertyGroups {
+		if propertyGroup.Condition == "" {
 			return propertyGroup, true
 		}
 	}
