@@ -1,0 +1,6 @@
+.idea/
+*.cproj
+Makefile
+Makefile.gen
+makedep.mk
+*.pdsc
