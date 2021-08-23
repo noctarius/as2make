@@ -42,3 +42,9 @@ CMSIS SDK:
 http://www.keil.com/dd2/pack/
 
 Rename *.pack to *.zip and unpack.
+
+GCC ARM Toolchain:
+
+https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
+
+(GCC 6 recommended)
