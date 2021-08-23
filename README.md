@@ -8,7 +8,13 @@ Since we had the same problem we build _as2make_. The tool reads the actual Atme
 
 Example Call:
 ```plain
-> as2make.linux --output-name="firmware" --toolchain=../toolchain --toolchain-prefix=arm-none-eabi- --cmsis-sdk=../cmsis-sdk/CMSIS --dfp-sdk=../dfp-sdk --project=./firmware.cproj
+> as2make.linux \
+  --output-name=firmware \
+  --toolchain=../toolchain \
+  --toolchain-prefix=arm-none-eabi- \
+  --cmsis-sdk=../cmsis-sdk/CMSIS \
+  --dfp-sdk=../dfp-sdk --project=./firmware.cproj
+
 Loading project file: ./firmware.cproj ...
 Loading DPF package descriptor: ../dfp-sdk/Atmel.SAMD21_DFP.pdsc ...
 Generating Makefile.gen ...
