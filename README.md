@@ -2,7 +2,7 @@
 
 **Disclaimer:** This project is not affiliated to Microchip in any way.
 
-Atmel Studio, built on Visual Studio, is a Windows-only solution. A lot of companies, however, have their buildservers (like Hudson, Jenkins, Bamboo, ...) hosted on Linux environments. While Atmel Studio can generate Makefiles which enable building on Linux, keeping them up-to-date is a tedious job.
+Atmel Studio (or now renamed to Microchip Studio) is built on Visual Studio, hence a Windows-only solution. A lot of companies, however, have their buildservers (like Hudson, Jenkins, Bamboo, ...) hosted on Linux environments. While Atmel Studio can generate Makefiles which enable building on Linux, keeping them up-to-date is a tedious job.
 
 Since we had the same problem we build _as2make_. The tool reads the actual Atmel Studio project files and SDK files (at the moment it supports CMSIS and DFPs) and generated the Makefile (and makedep.mk) on-the-fly in Linux. Right in the build itself.
 
