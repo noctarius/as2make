@@ -7,3 +7,4 @@ makedep.mk
 as2make
 *.darwin
 *.linux
+*.freebsd
