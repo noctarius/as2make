@@ -1,4 +1,4 @@
-#as2make - Atmel Studio to Makefile
+# as2make - Atmel Studio to Makefile
 
 Disclaimer: This project is not affiliated to Microchip in any way.
 
