@@ -5,3 +5,5 @@ Makefile.gen
 makedep.mk
 *.pdsc
 as2make
+*.darwin
+*.linux
