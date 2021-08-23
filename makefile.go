@@ -208,7 +208,14 @@ func writeCompileTarget(build builder.Build, file *os.File) {
 	write(file, "$(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)\n")
 	write(file, "\t@echo Building target: $@\n")
 	write(file, "\t%s", gcc)
-	write(file, " -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -mthumb -Wl,-Map=\"%s\" --specs=nano.specs -Wl,--start-group -lm  -Wl,--end-group -L\"./Device_Startup\"  -Wl,--gc-sections -mcpu=%s -Tsamd21g18a_flash.ld\n", build.OutputName("map"), build.CoreSpecification())
+	write(
+		file,
+		" -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -mthumb -Wl,-Map=\"%s\" --specs=nano.specs -Wl,--start-group -lm  -Wl,--end-group %s -Wl,--gc-sections -mcpu=%s %s\n",
+		build.OutputName("map"),
+		strings.Join(build.LinkerLibrarySearchPaths(), " "),
+		build.CoreSpecification(),
+		build.MiscellaneousLinkerFlags(),
+	)
 	if build.WithHex() {
 		write(file, "\t%s", objCopy)
 		write(file, " -O ihex -R .eeprom -R .fuse -R .lock -R .signature  \"%s\" \"%s\"\n", build.OutputName("elf"), build.OutputName("hex"))

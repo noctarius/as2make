@@ -53,22 +53,24 @@ func init() {
 }
 
 type Build struct {
-	projectDir        string
-	project           types.Project
-	toolchain         toolchain.Toolchain
-	sources           []File
-	ldSources         []File
-	subdirs           []string
-	settings          types.PropertyGroup
-	release           types.PropertyGroup
-	includePaths      []string
-	defSymbols        []string
-	cmsis             cmsis.SDK
-	dfp               dfp.SDK
-	optimizationLevel string
-	deviceDefine      string
-	coreSpecification string
-	outputName        string
+	projectDir               string
+	project                  types.Project
+	toolchain                toolchain.Toolchain
+	sources                  []File
+	ldSources                []File
+	subdirs                  []string
+	settings                 types.PropertyGroup
+	release                  types.PropertyGroup
+	includePaths             []string
+	defSymbols               []string
+	linkerLibrarySearchPaths []string
+	cmsis                    cmsis.SDK
+	dfp                      dfp.SDK
+	optimizationLevel        string
+	deviceDefine             string
+	coreSpecification        string
+	outputName               string
+	miscellaneousLinkerFlags string
 }
 
 func NewBuild() (Build, error) {
@@ -127,21 +129,24 @@ func NewBuild() (Build, error) {
 		return Build{}, err
 	}
 
+	miscellaneousLinkerFlags := release.ToolchainSettings.ArmGcc.ArmgccLinkerMiscellaneousLinkerFlags.Content
 	return Build{
-		projectDir:        projectDir,
-		project:           project,
-		toolchain:         toolchain,
-		sources:           sources,
-		subdirs:           subdirs,
-		ldSources:         ldSources,
-		settings:          settings,
-		release:           release,
-		includePaths:      includePaths(release.ToolchainSettings, cmsis, dfp),
-		defSymbols:        defSymbols(release.ToolchainSettings),
-		optimizationLevel: optimizationLevel(release.ToolchainSettings),
-		deviceDefine:      device.Compile.Define,
-		coreSpecification: device.Processor.Dcore,
-		outputName:        *outputName,
+		projectDir:               projectDir,
+		project:                  project,
+		toolchain:                toolchain,
+		sources:                  sources,
+		subdirs:                  subdirs,
+		ldSources:                ldSources,
+		settings:                 settings,
+		release:                  release,
+		includePaths:             includePaths(release.ToolchainSettings, cmsis, dfp),
+		defSymbols:               defSymbols(release.ToolchainSettings),
+		optimizationLevel:        optimizationLevel(release.ToolchainSettings),
+		deviceDefine:             device.Compile.Define,
+		coreSpecification:        device.Processor.Dcore,
+		outputName:               *outputName,
+		miscellaneousLinkerFlags: miscellaneousLinkerFlags,
+		linkerLibrarySearchPaths: linkerLibrarySearchPaths(release.ToolchainSettings),
 	}, nil
 }
 
@@ -212,6 +217,14 @@ func (b Build) CoreSpecification() string {
 	core := strings.ToLower(b.coreSpecification)
 	core = strings.Replace(core, "+", "plus", -1)
 	return core
+}
+
+func (b Build) MiscellaneousLinkerFlags() string {
+	return b.miscellaneousLinkerFlags
+}
+
+func (b Build) LinkerLibrarySearchPaths() []string {
+	return b.linkerLibrarySearchPaths
 }
 
 func findSubdirs(project types.Project, projectDir string) ([]string, error) {
@@ -353,4 +366,18 @@ func optimizationLevel(toolchainSettings types.ToolchainSettings) string {
 		return "-Os"
 	}
 	return ""
+}
+
+func linkerLibrarySearchPaths(toolchainSettings types.ToolchainSettings) []string {
+	values := toolchainSettings.ArmGcc.ArmgccLinkerLibrariesLibrarySearchPaths.ListValues
+	paths := make([]string, 0)
+	for _, value := range values.Values {
+		path := strings.Replace(value.Content, "%24(ProjectDir)", ".", -1)
+		if !strings.Contains(path, "%24") {
+			path = strings.Replace(path, "\\", "/", -1)
+			path = strings.Replace(path, "..", ".", -1)
+			paths = append(paths, fmt.Sprintf("-L\"%s\"", path))
+		}
+	}
+	return paths
 }

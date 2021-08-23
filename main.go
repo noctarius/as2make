@@ -28,9 +28,7 @@ package main
 import (
 	"fmt"
 	"github.com/clevabit/as2make/builder"
-	"github.com/clevabit/as2make/types"
 	"io"
-	"strings"
 )
 
 func main() {
@@ -41,20 +39,6 @@ func main() {
 
 	writeMakefile(build)
 	writeMakedepMk(build)
-}
-
-func searchPaths(toolchainSettings types.ToolchainSettings, cmsis, dfp string) []string {
-	values := toolchainSettings.ArmGcc.ArmgccAssemblerGeneralIncludePaths.ListValues
-	paths := make([]string, 0)
-	for _, value := range values.Values {
-		path := strings.Replace(value.Content, "%24(ProjectDir)", ".", -1)
-		if !strings.Contains(value.Content, "%24") {
-			path = strings.Replace(path, "\\", "/", -1)
-			path = strings.Replace(path, "..", ".", -1)
-			paths = append(paths, fmt.Sprintf("-I\"%s\"", path))
-		}
-	}
-	return paths
 }
 
 func write(file io.StringWriter, format string, args ...interface{}) {
