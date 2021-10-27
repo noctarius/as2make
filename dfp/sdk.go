@@ -67,6 +67,15 @@ func (s SDK) Device(name string) (Device, error) {
 	return Device{}, fmt.Errorf("device %s not found in package descriptor", name)
 }
 
+func (s SDK) Component(class, group, condition string) (Component, error) {
+	for _, component := range s.packageDesc.Components.Components {
+		if component.Cclass == class && component.Cgroup == group && component.Condition == condition {
+			return component, nil
+		}
+	}
+	return Component{}, fmt.Errorf("component %s not found in package descriptor", condition)
+}
+
 func loadPackageDescriptor(sdkPath string) (Package, error) {
 	files := make([]string, 0)
 	if err := filepath.WalkDir(sdkPath, func(path string, d fs.DirEntry, err error) error {

@@ -132,6 +132,13 @@ func NewBuild() (Build, error) {
 		return Build{}, err
 	}
 
+	includePaths := includePaths(release.ToolchainSettings, cmsis)
+	startupIncludePath, err := deviceSpecificIncludePath(settings, dfp)
+	if err != nil {
+		return Build{}, err
+	}
+	includePaths = append(includePaths, startupIncludePath)
+
 	return Build{
 		projectDir:               projectDir,
 		project:                  project,
@@ -141,7 +148,7 @@ func NewBuild() (Build, error) {
 		ldSources:                ldSources,
 		settings:                 settings,
 		release:                  release,
-		includePaths:             includePaths(release.ToolchainSettings, cmsis, dfp),
+		includePaths:             includePaths,
 		defSymbols:               defSymbols(release.ToolchainSettings),
 		optimizationLevel:        optimizationLevel(release.ToolchainSettings),
 		deviceDefine:             device.Compile.Define,
@@ -356,7 +363,7 @@ func findProjectSettings(project types.Project) (types.PropertyGroup, bool) {
 	return types.PropertyGroup{}, false
 }
 
-func includePaths(toolchainSettings types.ToolchainSettings, cmsis cmsis.SDK, dfp dfp.SDK) []string {
+func includePaths(toolchainSettings types.ToolchainSettings, cmsis cmsis.SDK) []string {
 	var values types.ListValues
 	if toolchainSettings.AvrGcc != nil {
 		values = toolchainSettings.AvrGcc.AvrgccAssemblerGeneralIncludePaths.ListValues
@@ -374,9 +381,22 @@ func includePaths(toolchainSettings types.ToolchainSettings, cmsis cmsis.SDK, df
 			paths = append(paths, fmt.Sprintf("-I\"%s\"", path))
 		}
 	}
-	path = strings.Replace(filepath.Join(dfp.Path(), "/samd21a/include"), "\\", "/", -1)
-	paths = append(paths, fmt.Sprintf("-I\"%s\"", path))
 	return paths
+}
+
+func deviceSpecificIncludePath(settings types.PropertyGroup, dfp dfp.SDK) (string, error) {
+	deviceName := settings.Avrdevice.Content
+	component, err := dfp.Component("Device", "Startup", deviceName)
+	if err != nil {
+		return "", err
+	}
+	for _, file := range component.Files.Files {
+		if file.Category == "include" {
+			path := strings.Replace(filepath.Join(dfp.Path(), file.Name), "\\", "/", -1)
+			return path, nil
+		}
+	}
+	return "", fmt.Errorf("could not find device startup include")
 }
 
 func defSymbols(toolchainSettings types.ToolchainSettings) []string {
