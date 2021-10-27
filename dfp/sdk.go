@@ -45,7 +45,7 @@ type SDK struct {
 func New(sdkPath string) (SDK, error) {
 	packageDesc, err := loadPackageDescriptor(sdkPath)
 	if err != nil {
-		return SDK{}, nil
+		return SDK{}, err
 	}
 
 	return SDK{
