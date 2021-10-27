@@ -36,7 +36,7 @@ import (
 )
 
 func main() {
-	f, err := os.Open("Atmel.SAMD21_DFP.pdsc")
+	f, err := os.Open("test-atmega.cproj")
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +65,7 @@ func main() {
 	}
 	nodes = append(nodes, n...)
 
-	f, err = os.OpenFile("dfp/generated.go", os.O_RDWR|os.O_CREATE, os.ModePerm)
+	f, err = os.OpenFile("types/generated2.go", os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
@@ -230,7 +230,7 @@ func parseElement(node *Element, element map[string]interface{}) error {
 			key = key[1:]
 			if attribute, found := findAttribute(node.attributes, key); !found {
 				node.attributes = append(node.attributes, &Attribute{
-					name: key,
+					name:     key,
 					datatype: guessDatatype(value.(string), nil),
 				})
 			} else {
