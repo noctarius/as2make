@@ -43,7 +43,7 @@ var (
 	project         = flag.String("project", "-", "--project=<path_to_project_file>")
 	toolchainPath   = flag.String("toolchain", "-", "--toolchain=<path_to_bin_dir>")
 	toolchainPrefix = flag.String("toolchain-prefix", "-", "--toolchain-prefix=<CROSS_COMPILE>")
-	cmsisSdkPath    = flag.String("cmsis-sdk", "-", "--cmsis-sdk=<path_to_cmsis_dir>")
+	cmsisSdkPath    = flag.String("cmsis-sdk", "", "--cmsis-sdk=<path_to_cmsis_dir>")
 	dfpSdkPath      = flag.String("dfp-sdk", "-", "--dfp-sdk=<path_to_dfp_dir>")
 	outputName      = flag.String("output-name", "build", "--output-name=<outputname>")
 )
@@ -70,7 +70,6 @@ type Build struct {
 	deviceDefine             string
 	coreSpecification        string
 	outputName               string
-	miscellaneousLinkerFlags string
 }
 
 func NewBuild() (Build, error) {
@@ -109,6 +108,10 @@ func NewBuild() (Build, error) {
 		return Build{}, fmt.Errorf("no release configuration found")
 	}
 
+	if release.ToolchainSettings.AvrGcc == nil && release.ToolchainSettings.ArmGcc == nil {
+		return Build{}, fmt.Errorf("found unsupported cproj file (at the moment only avr and arm are supported)")
+	}
+
 	settings, found := findProjectSettings(project)
 	if !found {
 		return Build{}, fmt.Errorf("no project settings configuration found")
@@ -129,7 +132,6 @@ func NewBuild() (Build, error) {
 		return Build{}, err
 	}
 
-	miscellaneousLinkerFlags := release.ToolchainSettings.ArmGcc.ArmgccLinkerMiscellaneousLinkerFlags.Content
 	return Build{
 		projectDir:               projectDir,
 		project:                  project,
@@ -145,7 +147,6 @@ func NewBuild() (Build, error) {
 		deviceDefine:             device.Compile.Define,
 		coreSpecification:        device.Processor.Dcore,
 		outputName:               *outputName,
-		miscellaneousLinkerFlags: miscellaneousLinkerFlags,
 		linkerLibrarySearchPaths: linkerLibrarySearchPaths(release.ToolchainSettings),
 	}, nil
 }
@@ -186,27 +187,52 @@ func (b Build) OptimizationLevel() string {
 }
 
 func (b Build) WithHex() bool {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return b.release.ToolchainSettings.AvrGcc.AvrgccCommonOutputfilesHex.Content
+	}
 	return b.release.ToolchainSettings.ArmGcc.ArmgccCommonOutputfilesHex.Content
 }
 
 func (b Build) WithLss() bool {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return b.release.ToolchainSettings.AvrGcc.AvrgccCommonOutputfilesLss.Content
+	}
 	return b.release.ToolchainSettings.ArmGcc.ArmgccCommonOutputfilesLss.Content
 }
 
 func (b Build) WithEep() bool {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return b.release.ToolchainSettings.AvrGcc.AvrgccCommonOutputfilesEep.Content
+	}
 	return b.release.ToolchainSettings.ArmGcc.ArmgccCommonOutputfilesEep.Content
 }
 
 func (b Build) WithBin() bool {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return false
+	}
 	return b.release.ToolchainSettings.ArmGcc.ArmgccCommonOutputfilesBin.Content
 }
 
 func (b Build) WithSrec() bool {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return b.release.ToolchainSettings.AvrGcc.AvrgccCommonOutputfilesSrec.Content
+	}
 	return b.release.ToolchainSettings.ArmGcc.ArmgccCommonOutputfilesSrec.Content
 }
 
 func (b Build) WithWarningAll() bool {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return b.release.ToolchainSettings.AvrGcc.AvrgccCompilerWarningsAllWarnings.Content
+	}
 	return b.release.ToolchainSettings.ArmGcc.ArmgccCompilerWarningsAllWarnings.Content
+}
+
+func (b Build) MiscellaneousLinkerFlags() string {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return b.release.ToolchainSettings.AvrGcc.AvrgccLinkerMiscellaneousLinkerFlags.Content
+	}
+	return b.release.ToolchainSettings.ArmGcc.ArmgccLinkerMiscellaneousLinkerFlags.Content
 }
 
 func (b Build) DeviceDefine() string {
@@ -217,10 +243,6 @@ func (b Build) CoreSpecification() string {
 	core := strings.ToLower(b.coreSpecification)
 	core = strings.Replace(core, "+", "plus", -1)
 	return core
-}
-
-func (b Build) MiscellaneousLinkerFlags() string {
-	return b.miscellaneousLinkerFlags
 }
 
 func (b Build) LinkerLibrarySearchPaths() []string {
@@ -335,7 +357,13 @@ func findProjectSettings(project types.Project) (types.PropertyGroup, bool) {
 }
 
 func includePaths(toolchainSettings types.ToolchainSettings, cmsis cmsis.SDK, dfp dfp.SDK) []string {
-	values := toolchainSettings.ArmGcc.ArmgccAssemblerGeneralIncludePaths.ListValues
+	var values types.ListValues
+	if toolchainSettings.AvrGcc != nil {
+		values = toolchainSettings.AvrGcc.AvrgccAssemblerGeneralIncludePaths.ListValues
+	} else {
+		values = toolchainSettings.ArmGcc.ArmgccAssemblerGeneralIncludePaths.ListValues
+	}
+
 	paths := make([]string, 0)
 	path := strings.Replace(filepath.Join(cmsis.Path(), "/Core/Include"), "\\", "/", -1)
 	paths = append(paths, fmt.Sprintf("-I\"%s\"", path))
@@ -352,7 +380,13 @@ func includePaths(toolchainSettings types.ToolchainSettings, cmsis cmsis.SDK, df
 }
 
 func defSymbols(toolchainSettings types.ToolchainSettings) []string {
-	values := toolchainSettings.ArmGcc.ArmgccCompilerSymbolsDefSymbols.ListValues
+	var values types.ListValues
+	if toolchainSettings.AvrGcc != nil {
+		values = toolchainSettings.AvrGcc.AvrgccCompilerSymbolsDefSymbols.ListValues
+	} else {
+		values = toolchainSettings.ArmGcc.ArmgccCompilerSymbolsDefSymbols.ListValues
+	}
+
 	symbols := make([]string, 0)
 	for _, value := range values.Values {
 		symbols = append(symbols, fmt.Sprintf("-D%s", value.Content))
@@ -361,7 +395,14 @@ func defSymbols(toolchainSettings types.ToolchainSettings) []string {
 }
 
 func optimizationLevel(toolchainSettings types.ToolchainSettings) string {
-	switch toolchainSettings.ArmGcc.ArmgccCompilerOptimizationLevel.Content {
+	var level string
+	if toolchainSettings.AvrGcc != nil {
+		level = toolchainSettings.AvrGcc.AvrgccCompilerOptimizationLevel.Content
+	} else {
+		level = toolchainSettings.ArmGcc.ArmgccCompilerOptimizationLevel.Content
+	}
+
+	switch level {
 	case "Optimize for size (-Os)":
 		return "-Os"
 	}
@@ -369,7 +410,13 @@ func optimizationLevel(toolchainSettings types.ToolchainSettings) string {
 }
 
 func linkerLibrarySearchPaths(toolchainSettings types.ToolchainSettings) []string {
-	values := toolchainSettings.ArmGcc.ArmgccLinkerLibrariesLibrarySearchPaths.ListValues
+	var values types.ListValues
+	if toolchainSettings.AvrGcc != nil {
+		return []string{}
+	} else {
+		values = toolchainSettings.ArmGcc.ArmgccLinkerLibrariesLibrarySearchPaths.ListValues
+	}
+
 	paths := make([]string, 0)
 	for _, value := range values.Values {
 		path := strings.Replace(value.Content, "%24(ProjectDir)", ".", -1)

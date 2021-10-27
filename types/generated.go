@@ -26,56 +26,56 @@
 package types
 
 type Project struct {
-	Xmlns string `xml:"xmlns,attr"`
-	ToolsVersion float64 `xml:"ToolsVersion,attr"`
-	DefaultTargets string `xml:"DefaultTargets,attr"`
+	Xmlns          string          `xml:"xmlns,attr"`
+	ToolsVersion   float64         `xml:"ToolsVersion,attr"`
+	DefaultTargets string          `xml:"DefaultTargets,attr"`
 	PropertyGroups []PropertyGroup `xml:"PropertyGroup"`
-	ItemGroups []ItemGroup `xml:"ItemGroup"`
-	Import Import `xml:"Import"`
+	ItemGroups     []ItemGroup     `xml:"ItemGroup"`
+	Import         Import          `xml:"Import"`
 }
 
 type PropertyGroup struct {
-	Condition string `xml:"Condition,attr"`
-	RootNamespace RootNamespace `xml:"RootNamespace"`
-	BootSegment BootSegment `xml:"BootSegment"`
-	AtStartFilePath AtStartFilePath `xml:"atStartFilePath"`
-	AtzipPath AtzipPath `xml:"AtzipPath"`
-	Avrtool Avrtool `xml:"avrtool"`
-	ProjectVersion ProjectVersion `xml:"ProjectVersion"`
-	ProgFlashFromRam ProgFlashFromRam `xml:"ProgFlashFromRam"`
-	RamSnippetAddress RamSnippetAddress `xml:"RamSnippetAddress"`
-	AsfFrameworkConfig AsfFrameworkConfig `xml:"AsfFrameworkConfig"`
-	ComAtmelAvrdbgToolAtmelice ComAtmelAvrdbgToolAtmelice `xml:"com_atmel_avrdbg_tool_atmelice"`
+	Condition                      string                         `xml:"Condition,attr"`
+	RootNamespace                  RootNamespace                  `xml:"RootNamespace"`
+	BootSegment                    BootSegment                    `xml:"BootSegment"`
+	AtStartFilePath                AtStartFilePath                `xml:"atStartFilePath"`
+	AtzipPath                      AtzipPath                      `xml:"AtzipPath"`
+	Avrtool                        Avrtool                        `xml:"avrtool"`
+	ProjectVersion                 ProjectVersion                 `xml:"ProjectVersion"`
+	ProgFlashFromRam               ProgFlashFromRam               `xml:"ProgFlashFromRam"`
+	RamSnippetAddress              RamSnippetAddress              `xml:"RamSnippetAddress"`
+	AsfFrameworkConfig             AsfFrameworkConfig             `xml:"AsfFrameworkConfig"`
+	ComAtmelAvrdbgToolAtmelice     ComAtmelAvrdbgToolAtmelice     `xml:"com_atmel_avrdbg_tool_atmelice"`
 	ComAtmelAvrdbgToolJtagice3plus ComAtmelAvrdbgToolJtagice3plus `xml:"com_atmel_avrdbg_tool_jtagice3plus"`
-	ToolchainName ToolchainName `xml:"ToolchainName"`
-	ProjectGuid ProjectGuid `xml:"ProjectGuid"`
-	OutputFileExtension OutputFileExtension `xml:"OutputFileExtension"`
-	Avrtoolserialnumber Avrtoolserialnumber `xml:"avrtoolserialnumber"`
-	SchemaVersion SchemaVersion `xml:"SchemaVersion"`
-	OutputFileName OutputFileName `xml:"OutputFileName"`
-	AssemblyName AssemblyName `xml:"AssemblyName"`
-	CacheFlash CacheFlash `xml:"CacheFlash"`
-	Avrtoolinterfaceclock Avrtoolinterfaceclock `xml:"avrtoolinterfaceclock"`
-	EraseKey EraseKey `xml:"EraseKey"`
-	OutputType OutputType `xml:"OutputType"`
-	Language Language `xml:"Language"`
-	ToolchainFlavour ToolchainFlavour `xml:"ToolchainFlavour"`
-	KeepTimersRunning KeepTimersRunning `xml:"KeepTimersRunning"`
-	PreserveEEPROM PreserveEEPROM `xml:"preserveEEPROM"`
-	Eraseonlaunchrule Eraseonlaunchrule `xml:"eraseonlaunchrule"`
-	ResetRule ResetRule `xml:"ResetRule"`
-	Avrdevice Avrdevice `xml:"avrdevice"`
-	OutputDirectory OutputDirectory `xml:"OutputDirectory"`
-	OverrideVtorValue OverrideVtorValue `xml:"OverrideVtorValue"`
-	GpdscFilePath GpdscFilePath `xml:"GpdscFilePath"`
-	Avrtoolinterface Avrtoolinterface `xml:"avrtoolinterface"`
-	Name Name `xml:"Name"`
-	OverrideVtor OverrideVtor `xml:"OverrideVtor"`
-	AcmeProjectConfigs AcmeProjectConfigs `xml:"AcmeProjectConfigs"`
-	Avrdeviceexpectedsignature Avrdeviceexpectedsignature `xml:"avrdeviceexpectedsignature"`
-	Avrdeviceseries Avrdeviceseries `xml:"avrdeviceseries"`
-	UncachedRange UncachedRange `xml:"UncachedRange"`
-	ToolchainSettings ToolchainSettings `xml:"ToolchainSettings"`
+	ToolchainName                  ToolchainName                  `xml:"ToolchainName"`
+	ProjectGuid                    ProjectGuid                    `xml:"ProjectGuid"`
+	OutputFileExtension            OutputFileExtension            `xml:"OutputFileExtension"`
+	Avrtoolserialnumber            Avrtoolserialnumber            `xml:"avrtoolserialnumber"`
+	SchemaVersion                  SchemaVersion                  `xml:"SchemaVersion"`
+	OutputFileName                 OutputFileName                 `xml:"OutputFileName"`
+	AssemblyName                   AssemblyName                   `xml:"AssemblyName"`
+	CacheFlash                     CacheFlash                     `xml:"CacheFlash"`
+	Avrtoolinterfaceclock          Avrtoolinterfaceclock          `xml:"avrtoolinterfaceclock"`
+	EraseKey                       EraseKey                       `xml:"EraseKey"`
+	OutputType                     OutputType                     `xml:"OutputType"`
+	Language                       Language                       `xml:"Language"`
+	ToolchainFlavour               ToolchainFlavour               `xml:"ToolchainFlavour"`
+	KeepTimersRunning              KeepTimersRunning              `xml:"KeepTimersRunning"`
+	PreserveEEPROM                 PreserveEEPROM                 `xml:"preserveEEPROM"`
+	Eraseonlaunchrule              Eraseonlaunchrule              `xml:"eraseonlaunchrule"`
+	ResetRule                      ResetRule                      `xml:"ResetRule"`
+	Avrdevice                      Avrdevice                      `xml:"avrdevice"`
+	OutputDirectory                OutputDirectory                `xml:"OutputDirectory"`
+	OverrideVtorValue              OverrideVtorValue              `xml:"OverrideVtorValue"`
+	GpdscFilePath                  GpdscFilePath                  `xml:"GpdscFilePath"`
+	Avrtoolinterface               Avrtoolinterface               `xml:"avrtoolinterface"`
+	Name                           Name                           `xml:"Name"`
+	OverrideVtor                   OverrideVtor                   `xml:"OverrideVtor"`
+	AcmeProjectConfigs             AcmeProjectConfigs             `xml:"AcmeProjectConfigs"`
+	Avrdeviceexpectedsignature     Avrdeviceexpectedsignature     `xml:"avrdeviceexpectedsignature"`
+	Avrdeviceseries                Avrdeviceseries                `xml:"avrdeviceseries"`
+	UncachedRange                  UncachedRange                  `xml:"UncachedRange"`
+	ToolchainSettings              ToolchainSettings              `xml:"ToolchainSettings"`
 }
 
 type RootNamespace struct {
@@ -115,12 +115,12 @@ type AsfFrameworkConfig struct {
 }
 
 type FrameworkData struct {
-	Documentation Documentation `xml:"documentation"`
+	Documentation        Documentation        `xml:"documentation"`
 	OfflineDocumentation OfflineDocumentation `xml:"offline-documentation"`
-	Dependencies Dependencies `xml:"dependencies"`
-	Options Options `xml:"options"`
-	Configurations Configurations `xml:"configurations"`
-	Files Files `xml:"files"`
+	Dependencies         Dependencies         `xml:"dependencies"`
+	Options              Options              `xml:"options"`
+	Configurations       Configurations       `xml:"configurations"`
+	Files                Files                `xml:"files"`
 }
 
 type Documentation struct {
@@ -136,7 +136,7 @@ type Dependencies struct {
 }
 
 type ContentExtension struct {
-	Eid string `xml:"eid,attr"`
+	Eid     string `xml:"eid,attr"`
 	Uuidref string `xml:"uuidref,attr"`
 	Version string `xml:"version,attr"`
 }
@@ -155,13 +155,13 @@ type Files struct {
 
 type ComAtmelAvrdbgToolAtmelice struct {
 	ToolOptions ToolOptions `xml:"ToolOptions"`
-	ToolType ToolType `xml:"ToolType"`
-	ToolNumber ToolNumber `xml:"ToolNumber"`
-	ToolName ToolName `xml:"ToolName"`
+	ToolType    ToolType    `xml:"ToolType"`
+	ToolNumber  ToolNumber  `xml:"ToolNumber"`
+	ToolName    ToolName    `xml:"ToolName"`
 }
 
 type ToolOptions struct {
-	InterfaceName InterfaceName `xml:"InterfaceName"`
+	InterfaceName       InterfaceName       `xml:"InterfaceName"`
 	InterfaceProperties InterfaceProperties `xml:"InterfaceProperties"`
 }
 
@@ -191,9 +191,9 @@ type ToolName struct {
 
 type ComAtmelAvrdbgToolJtagice3plus struct {
 	ToolOptions ToolOptions `xml:"ToolOptions"`
-	ToolType ToolType `xml:"ToolType"`
-	ToolNumber ToolNumber `xml:"ToolNumber"`
-	ToolName ToolName `xml:"ToolName"`
+	ToolType    ToolType    `xml:"ToolType"`
+	ToolNumber  ToolNumber  `xml:"ToolNumber"`
+	ToolName    ToolName    `xml:"ToolName"`
 }
 
 type ToolchainName struct {
@@ -298,7 +298,7 @@ type AcmeProjectConfigs struct {
 
 type AcmeProjectConfig struct {
 	TopLevelComponents TopLevelComponents `xml:"TopLevelComponents"`
-	AcmeActionInfos AcmeActionInfos `xml:"AcmeActionInfos"`
+	AcmeActionInfos    AcmeActionInfos    `xml:"AcmeActionInfos"`
 	NonsecureFilesInfo NonsecureFilesInfo `xml:"NonsecureFilesInfo"`
 }
 
@@ -307,10 +307,10 @@ type TopLevelComponents struct {
 }
 
 type AcmeProjectComponent struct {
-	Cgroup string `xml:"Cgroup,attr"`
-	CVersion string `xml:"CVersion,attr"`
-	IsAutoGenerated bool `xml:"IsAutoGenerated,attr"`
-	CClass string `xml:"CClass,attr"`
+	Cgroup          string `xml:"Cgroup,attr"`
+	CVersion        string `xml:"CVersion,attr"`
+	IsAutoGenerated bool   `xml:"IsAutoGenerated,attr"`
+	CClass          string `xml:"CClass,attr"`
 }
 
 type AcmeActionInfos struct {
@@ -318,10 +318,10 @@ type AcmeActionInfos struct {
 }
 
 type AcmeProjectActionInfo struct {
-	IsConfig bool `xml:"IsConfig,attr"`
-	Hash string `xml:"Hash,attr"`
-	Action string `xml:"Action,attr"`
-	Source string `xml:"Source,attr"`
+	IsConfig bool   `xml:"IsConfig,attr"`
+	Hash     string `xml:"Hash,attr"`
+	Action   string `xml:"Action,attr"`
+	Source   string `xml:"Source,attr"`
 }
 
 type NonsecureFilesInfo struct {
@@ -341,34 +341,35 @@ type UncachedRange struct {
 }
 
 type ToolchainSettings struct {
-	ArmGcc ArmGcc `xml:"ArmGcc"`
+	ArmGcc *ArmGcc `xml:"ArmGcc"`
+	AvrGcc *AvrGcc `xml:"AvrGcc"`
 }
 
 type ArmGcc struct {
-	ArmgccCompilerDirectoriesIncludePaths ArmgccCompilerDirectoriesIncludePaths `xml:"armgcc.compiler.directories.IncludePaths"`
+	ArmgccCompilerDirectoriesIncludePaths                          ArmgccCompilerDirectoriesIncludePaths                          `xml:"armgcc.compiler.directories.IncludePaths"`
 	ArmgccCompilerOptimizationPrepareFunctionsForGarbageCollection ArmgccCompilerOptimizationPrepareFunctionsForGarbageCollection `xml:"armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection"`
-	ArmgccCommonOutputfilesBin ArmgccCommonOutputfilesBin `xml:"armgcc.common.outputfiles.bin"`
-	ArmgccCompilerSymbolsDefSymbols ArmgccCompilerSymbolsDefSymbols `xml:"armgcc.compiler.symbols.DefSymbols"`
-	ArmgccCompilerWarningsAllWarnings ArmgccCompilerWarningsAllWarnings `xml:"armgcc.compiler.warnings.AllWarnings"`
-	ArmgccLinkerLibrariesLibrarySearchPaths ArmgccLinkerLibrariesLibrarySearchPaths `xml:"armgcc.linker.libraries.LibrarySearchPaths"`
-	ArmgccLinkerMiscellaneousLinkerFlags ArmgccLinkerMiscellaneousLinkerFlags `xml:"armgcc.linker.miscellaneous.LinkerFlags"`
-	ArmgccAssemblerGeneralIncludePaths ArmgccAssemblerGeneralIncludePaths `xml:"armgcc.assembler.general.IncludePaths"`
-	ArmgccPreprocessingassemblerGeneralIncludePaths ArmgccPreprocessingassemblerGeneralIncludePaths `xml:"armgcc.preprocessingassembler.general.IncludePaths"`
-	ArmgccCommonOutputfilesSrec ArmgccCommonOutputfilesSrec `xml:"armgcc.common.outputfiles.srec"`
-	ArmgccCompilerOptimizationLevel ArmgccCompilerOptimizationLevel `xml:"armgcc.compiler.optimization.level"`
-	ArmgccCommonOutputfilesEep ArmgccCommonOutputfilesEep `xml:"armgcc.common.outputfiles.eep"`
-	ArmgccLinkerLibrariesLibraries ArmgccLinkerLibrariesLibraries `xml:"armgcc.linker.libraries.Libraries"`
-	ArmgccCommonOutputfilesHex ArmgccCommonOutputfilesHex `xml:"armgcc.common.outputfiles.hex"`
-	ArmgccCommonOutputfilesLss ArmgccCommonOutputfilesLss `xml:"armgcc.common.outputfiles.lss"`
-	ArmgccLinkerGeneralUseNewlibNano ArmgccLinkerGeneralUseNewlibNano `xml:"armgcc.linker.general.UseNewlibNano"`
-	ArmgccLinkerOptimizationGarbageCollectUnusedSections ArmgccLinkerOptimizationGarbageCollectUnusedSections `xml:"armgcc.linker.optimization.GarbageCollectUnusedSections"`
-	ArmgccLinkerMemorysettingsExternalRAM ArmgccLinkerMemorysettingsExternalRAM `xml:"armgcc.linker.memorysettings.ExternalRAM"`
-	ArmgccAssemblerDebuggingDebugLevel ArmgccAssemblerDebuggingDebugLevel `xml:"armgcc.assembler.debugging.DebugLevel"`
-	ArmgccCompilerOptimizationDebugLevel ArmgccCompilerOptimizationDebugLevel `xml:"armgcc.compiler.optimization.DebugLevel"`
-	ArmgccCompilerGeneralChangeDefaultCharTypeUnsigned ArmgccCompilerGeneralChangeDefaultCharTypeUnsigned `xml:"armgcc.compiler.general.ChangeDefaultCharTypeUnsigned"`
-	ArmgccPreprocessingassemblerDebuggingDebugLevel ArmgccPreprocessingassemblerDebuggingDebugLevel `xml:"armgcc.preprocessingassembler.debugging.DebugLevel"`
-	ArmgccCompilerGeneralChangeDefaultBitFieldUnsigned ArmgccCompilerGeneralChangeDefaultBitFieldUnsigned `xml:"armgcc.compiler.general.ChangeDefaultBitFieldUnsigned"`
-	ArmgccCompilerOptimizationPrepareDataForGarbageCollection ArmgccCompilerOptimizationPrepareDataForGarbageCollection `xml:"armgcc.compiler.optimization.PrepareDataForGarbageCollection"`
+	ArmgccCommonOutputfilesBin                                     ArmgccCommonOutputfilesBin                                     `xml:"armgcc.common.outputfiles.bin"`
+	ArmgccCompilerSymbolsDefSymbols                                ArmgccCompilerSymbolsDefSymbols                                `xml:"armgcc.compiler.symbols.DefSymbols"`
+	ArmgccCompilerWarningsAllWarnings                              ArmgccCompilerWarningsAllWarnings                              `xml:"armgcc.compiler.warnings.AllWarnings"`
+	ArmgccLinkerLibrariesLibrarySearchPaths                        ArmgccLinkerLibrariesLibrarySearchPaths                        `xml:"armgcc.linker.libraries.LibrarySearchPaths"`
+	ArmgccLinkerMiscellaneousLinkerFlags                           ArmgccLinkerMiscellaneousLinkerFlags                           `xml:"armgcc.linker.miscellaneous.LinkerFlags"`
+	ArmgccAssemblerGeneralIncludePaths                             ArmgccAssemblerGeneralIncludePaths                             `xml:"armgcc.assembler.general.IncludePaths"`
+	ArmgccPreprocessingassemblerGeneralIncludePaths                ArmgccPreprocessingassemblerGeneralIncludePaths                `xml:"armgcc.preprocessingassembler.general.IncludePaths"`
+	ArmgccCommonOutputfilesSrec                                    ArmgccCommonOutputfilesSrec                                    `xml:"armgcc.common.outputfiles.srec"`
+	ArmgccCompilerOptimizationLevel                                ArmgccCompilerOptimizationLevel                                `xml:"armgcc.compiler.optimization.level"`
+	ArmgccCommonOutputfilesEep                                     ArmgccCommonOutputfilesEep                                     `xml:"armgcc.common.outputfiles.eep"`
+	ArmgccLinkerLibrariesLibraries                                 ArmgccLinkerLibrariesLibraries                                 `xml:"armgcc.linker.libraries.Libraries"`
+	ArmgccCommonOutputfilesHex                                     ArmgccCommonOutputfilesHex                                     `xml:"armgcc.common.outputfiles.hex"`
+	ArmgccCommonOutputfilesLss                                     ArmgccCommonOutputfilesLss                                     `xml:"armgcc.common.outputfiles.lss"`
+	ArmgccLinkerGeneralUseNewlibNano                               ArmgccLinkerGeneralUseNewlibNano                               `xml:"armgcc.linker.general.UseNewlibNano"`
+	ArmgccLinkerOptimizationGarbageCollectUnusedSections           ArmgccLinkerOptimizationGarbageCollectUnusedSections           `xml:"armgcc.linker.optimization.GarbageCollectUnusedSections"`
+	ArmgccLinkerMemorysettingsExternalRAM                          ArmgccLinkerMemorysettingsExternalRAM                          `xml:"armgcc.linker.memorysettings.ExternalRAM"`
+	ArmgccAssemblerDebuggingDebugLevel                             ArmgccAssemblerDebuggingDebugLevel                             `xml:"armgcc.assembler.debugging.DebugLevel"`
+	ArmgccCompilerOptimizationDebugLevel                           ArmgccCompilerOptimizationDebugLevel                           `xml:"armgcc.compiler.optimization.DebugLevel"`
+	ArmgccCompilerGeneralChangeDefaultCharTypeUnsigned             ArmgccCompilerGeneralChangeDefaultCharTypeUnsigned             `xml:"armgcc.compiler.general.ChangeDefaultCharTypeUnsigned"`
+	ArmgccPreprocessingassemblerDebuggingDebugLevel                ArmgccPreprocessingassemblerDebuggingDebugLevel                `xml:"armgcc.preprocessingassembler.debugging.DebugLevel"`
+	ArmgccCompilerGeneralChangeDefaultBitFieldUnsigned             ArmgccCompilerGeneralChangeDefaultBitFieldUnsigned             `xml:"armgcc.compiler.general.ChangeDefaultBitFieldUnsigned"`
+	ArmgccCompilerOptimizationPrepareDataForGarbageCollection      ArmgccCompilerOptimizationPrepareDataForGarbageCollection      `xml:"armgcc.compiler.optimization.PrepareDataForGarbageCollection"`
 }
 
 type ArmgccCompilerDirectoriesIncludePaths struct {
@@ -475,14 +476,132 @@ type ArmgccCompilerOptimizationPrepareDataForGarbageCollection struct {
 	Content bool `xml:",chardata"`
 }
 
+type AvrGcc struct {
+	AvrgccCommonOutputfilesHex                           AvrgccCommonOutputfilesHex                           `xml:"avrgcc.common.outputfiles.hex"`
+	AvrgccCommonOutputfilesLss                           AvrgccCommonOutputfilesLss                           `xml:"avrgcc.common.outputfiles.lss"`
+	AvrgccCommonOutputfilesUsersignatures                AvrgccCommonOutputfilesUsersignatures                `xml:"avrgcc.common.outputfiles.usersignatures"`
+	AvrgccCompilerGeneralChangeDefaultCharTypeUnsigned   AvrgccCompilerGeneralChangeDefaultCharTypeUnsigned   `xml:"avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned"`
+	AvrgccCompilerDirectoriesIncludePaths                AvrgccCompilerDirectoriesIncludePaths                `xml:"avrgcc.compiler.directories.IncludePaths"`
+	AvrgccCompilerWarningsAllWarnings                    AvrgccCompilerWarningsAllWarnings                    `xml:"avrgcc.compiler.warnings.AllWarnings"`
+	AvrgccCommonOptimizationRelaxBranches                AvrgccCommonOptimizationRelaxBranches                `xml:"avrgcc.common.optimization.RelaxBranches"`
+	AvrgccCommonOutputfilesSrec                          AvrgccCommonOutputfilesSrec                          `xml:"avrgcc.common.outputfiles.srec"`
+	AvrgccCompilerSymbolsDefSymbols                      AvrgccCompilerSymbolsDefSymbols                      `xml:"avrgcc.compiler.symbols.DefSymbols"`
+	AvrgccCompilerOptimizationLevel                      AvrgccCompilerOptimizationLevel                      `xml:"avrgcc.compiler.optimization.level"`
+	AvrgccCompilerOptimizationOtherFlags                 AvrgccCompilerOptimizationOtherFlags                 `xml:"avrgcc.compiler.optimization.OtherFlags"`
+	AvrgccLinkerLibrariesLibraries                       AvrgccLinkerLibrariesLibraries                       `xml:"avrgcc.linker.libraries.Libraries"`
+	AvrgccLinkerMiscellaneousLinkerFlags                 AvrgccLinkerMiscellaneousLinkerFlags                 `xml:"avrgcc.linker.miscellaneous.LinkerFlags"`
+	AvrgccAssemblerGeneralAssemblerFlags                 AvrgccAssemblerGeneralAssemblerFlags                 `xml:"avrgcc.assembler.general.AssemblerFlags"`
+	AvrgccCommonOutputfilesEep                           AvrgccCommonOutputfilesEep                           `xml:"avrgcc.common.outputfiles.eep"`
+	AvrgccAssemblerGeneralIncludePaths                   AvrgccAssemblerGeneralIncludePaths                   `xml:"avrgcc.assembler.general.IncludePaths"`
+	AvrgccCommonDevice                                   AvrgccCommonDevice                                   `xml:"avrgcc.common.Device"`
+	AvrgccCompilerOptimizationPackStructureMembers       AvrgccCompilerOptimizationPackStructureMembers       `xml:"avrgcc.compiler.optimization.PackStructureMembers"`
+	AvrgccCompilerOptimizationAllocateBytesNeededForEnum AvrgccCompilerOptimizationAllocateBytesNeededForEnum `xml:"avrgcc.compiler.optimization.AllocateBytesNeededForEnum"`
+	AvrgccCompilerMiscellaneousOtherFlags                AvrgccCompilerMiscellaneousOtherFlags                `xml:"avrgcc.compiler.miscellaneous.OtherFlags"`
+	AvrgccCompilerGeneralChangeDefaultBitFieldUnsigned   AvrgccCompilerGeneralChangeDefaultBitFieldUnsigned   `xml:"avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned"`
+	AvrgccCompilerOptimizationDebugLevel                 AvrgccCompilerOptimizationDebugLevel                 `xml:"avrgcc.compiler.optimization.DebugLevel"`
+	AvrgccAssemblerDebuggingDebugLevel                   AvrgccAssemblerDebuggingDebugLevel                   `xml:"avrgcc.assembler.debugging.DebugLevel"`
+}
+
+type AvrgccCommonOutputfilesHex struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCommonOutputfilesLss struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCommonOutputfilesUsersignatures struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCompilerGeneralChangeDefaultCharTypeUnsigned struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCompilerDirectoriesIncludePaths struct {
+	ListValues ListValues `xml:"ListValues"`
+}
+
+type AvrgccCompilerWarningsAllWarnings struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCommonOptimizationRelaxBranches struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCommonOutputfilesSrec struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCompilerSymbolsDefSymbols struct {
+	ListValues ListValues `xml:"ListValues"`
+}
+
+type AvrgccCompilerOptimizationLevel struct {
+	Content string `xml:",chardata"`
+}
+
+type AvrgccCompilerOptimizationOtherFlags struct {
+	Content string `xml:",chardata"`
+}
+
+type AvrgccLinkerLibrariesLibraries struct {
+	ListValues ListValues `xml:"ListValues"`
+}
+
+type AvrgccLinkerMiscellaneousLinkerFlags struct {
+	Content string `xml:",chardata"`
+}
+
+type AvrgccAssemblerGeneralAssemblerFlags struct {
+	Content string `xml:",chardata"`
+}
+
+type AvrgccCommonOutputfilesEep struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccAssemblerGeneralIncludePaths struct {
+	ListValues ListValues `xml:"ListValues"`
+}
+
+type AvrgccCommonDevice struct {
+	Content string `xml:",chardata"`
+}
+
+type AvrgccCompilerOptimizationPackStructureMembers struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCompilerOptimizationAllocateBytesNeededForEnum struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCompilerMiscellaneousOtherFlags struct {
+	Content string `xml:",chardata"`
+}
+
+type AvrgccCompilerGeneralChangeDefaultBitFieldUnsigned struct {
+	Content bool `xml:",chardata"`
+}
+
+type AvrgccCompilerOptimizationDebugLevel struct {
+	Content string `xml:",chardata"`
+}
+
+type AvrgccAssemblerDebuggingDebugLevel struct {
+	Content string `xml:",chardata"`
+}
+
 type ItemGroup struct {
 	Compiles []Compile `xml:"Compile"`
-	Folders []Folder `xml:"Folder"`
-	Nones []None `xml:"None"`
+	Folders  []Folder  `xml:"Folder"`
+	Nones    []None    `xml:"None"`
 }
 
 type Compile struct {
-	Include string `xml:"Include,attr"`
+	Include string  `xml:"Include,attr"`
 	SubType SubType `xml:"SubType"`
 }
 
@@ -495,11 +614,10 @@ type Folder struct {
 }
 
 type None struct {
-	Include string `xml:"Include,attr"`
+	Include string  `xml:"Include,attr"`
 	SubType SubType `xml:"SubType"`
 }
 
 type Import struct {
 	Project string `xml:"Project,attr"`
 }
-
