@@ -105,7 +105,7 @@ type Memory struct {
 	Start        string `xml:"start,attr"`
 	Size         string `xml:"size,attr"`
 	Type         string `xml:"type,attr"`
-	Pagesize     int64  `xml:"pagesize,attr"`
+	Pagesize     string `xml:"pagesize,attr"`
 	Rw           string `xml:"rw,attr"`
 	Id           string `xml:"id,attr"`
 	Default      int64  `xml:"default,attr"`
