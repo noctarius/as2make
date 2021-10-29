@@ -69,7 +69,9 @@ type Build struct {
 	optimizationLevel        string
 	deviceDefine             string
 	coreSpecification        string
+	mmcuSpecification        string
 	outputName               string
+	dfpSdkPath               string
 }
 
 func NewBuild() (Build, error) {
@@ -137,10 +139,11 @@ func NewBuild() (Build, error) {
 	if err != nil {
 		return Build{}, err
 	}
-	includePaths = append(includePaths, startupIncludePath)
+	includePaths = append(includePaths, fmt.Sprintf("-I\"%s\"", startupIncludePath))
 
 	return Build{
 		projectDir:               projectDir,
+		dfpSdkPath:               *dfpSdkPath,
 		project:                  project,
 		toolchain:                toolchain,
 		sources:                  sources,
@@ -153,9 +156,22 @@ func NewBuild() (Build, error) {
 		optimizationLevel:        optimizationLevel(release.ToolchainSettings),
 		deviceDefine:             device.Compile.Define,
 		coreSpecification:        device.Processor.Dcore,
+		mmcuSpecification:        mmcuSpecification(device),
 		outputName:               *outputName,
 		linkerLibrarySearchPaths: linkerLibrarySearchPaths(release.ToolchainSettings),
 	}, nil
+}
+
+func (b Build) DfpSdkPath() string {
+	return b.dfpSdkPath
+}
+
+func (b Build) IsArm() bool {
+	return b.project.IsArm()
+}
+
+func (b Build) IsAvr() bool {
+	return b.project.IsAvr()
 }
 
 func (b Build) OutputName(ext string) string {
@@ -235,6 +251,41 @@ func (b Build) WithWarningAll() bool {
 	return b.release.ToolchainSettings.ArmGcc.ArmgccCompilerWarningsAllWarnings.Content
 }
 
+func (b Build) WithUseNewlibNano() bool {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return false
+	}
+	return b.release.ToolchainSettings.ArmGcc.ArmgccLinkerGeneralUseNewlibNano.Content
+}
+
+func (b Build) WithPackStructureMembers() bool {
+	if b.release.ToolchainSettings.ArmGcc != nil {
+		return false
+	}
+	return b.release.ToolchainSettings.AvrGcc.AvrgccCompilerOptimizationPackStructureMembers.Content
+}
+
+func (b Build) WithRelaxBranches() bool {
+	if b.release.ToolchainSettings.ArmGcc != nil {
+		return false
+	}
+	return b.release.ToolchainSettings.AvrGcc.AvrgccCommonOptimizationRelaxBranches.Content
+}
+
+func (b Build) WithGcSections() bool {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return true
+	}
+	return b.release.ToolchainSettings.ArmGcc.ArmgccLinkerOptimizationGarbageCollectUnusedSections.Content
+}
+
+func (b Build) MiscellaneousCompilerFlags() string {
+	if b.release.ToolchainSettings.AvrGcc != nil {
+		return b.release.ToolchainSettings.AvrGcc.AvrgccCompilerMiscellaneousOtherFlags.Content
+	}
+	return "-mthumb"
+}
+
 func (b Build) MiscellaneousLinkerFlags() string {
 	if b.release.ToolchainSettings.AvrGcc != nil {
 		return b.release.ToolchainSettings.AvrGcc.AvrgccLinkerMiscellaneousLinkerFlags.Content
@@ -250,6 +301,10 @@ func (b Build) CoreSpecification() string {
 	core := strings.ToLower(b.coreSpecification)
 	core = strings.Replace(core, "+", "plus", -1)
 	return core
+}
+
+func (b Build) MmcuSpecification() string {
+	return b.mmcuSpecification
 }
 
 func (b Build) LinkerLibrarySearchPaths() []string {
@@ -447,4 +502,17 @@ func linkerLibrarySearchPaths(toolchainSettings types.ToolchainSettings) []strin
 		}
 	}
 	return paths
+}
+
+func mmcuSpecification(device dfp.Device) string {
+	for _, environment := range device.Environments {
+		if environment.Name == "atmel" {
+			for _, property := range environment.Extension.Properties {
+				if property.Name == "com.atmel.gcc.options.mmcu" {
+					return property.Value
+				}
+			}
+		}
+	}
+	return ""
 }

@@ -49,11 +49,19 @@ func writeMakefile(build builder.Build) {
 	write(file, "ADDITIONAL_DEPENDENCIES :=\n")
 	write(file, "EXECUTABLES :=\n")
 	write(file, "LIB_DEP :=\n")
+	write(file, "LIBS :=\n")
 	write(file, "USER_OBJS :=\n")
 	write(file, "OUTPUT_FILE_PATH :=\n")
 	write(file, "OUTPUT_FILE_PATH +=%s\n", build.OutputName("elf"))
 	write(file, "OUTPUT_FILE_PATH_AS_ARGS +=%s\n", build.OutputName("elf"))
-	write(file, "OUTPUT_FILE_DEP:= ./makedep.mk\n\n")
+
+	if build.IsAvr() {
+		write(file, "AVR_APP_PATH :=$$$AVR_APP_PATH$$$\n")
+	} else if build.IsArm() {
+		write(file, "OUTPUT_FILE_DEP:= ./makedep.mk\n")
+	}
+
+	write(file, "\n")
 
 	writeSubdirsFiles(build, file)
 	writeSrcFiles(build, file)
@@ -205,15 +213,46 @@ func writeCompileTarget(build builder.Build, file *os.File) {
 	objDump := build.Toolchain().Executable("objdump")
 	size := build.Toolchain().Executable("size")
 
+	arguments := []string{
+		"-Wl,--start-group",
+		"-Wl,--end-group",
+		"-Wl,-lm",
+		"-lm",
+	}
+
+	if build.IsArm() {
+		arguments = append(
+			arguments,
+			"-mthumb",
+			fmt.Sprintf("-mcpu=%s", build.CoreSpecification()),
+		)
+
+		if build.WithUseNewlibNano() {
+			arguments = append(arguments, "--specs=nano.specs")
+		}
+	} else if build.IsAvr() {
+		arguments = append(
+			arguments,
+			fmt.Sprintf("-mmcu=%s", build.MmcuSpecification()),
+			fmt.Sprintf("-B \"%s/gcc/dev/%s\"", build.DfpSdkPath(), build.MmcuSpecification()),
+		)
+	} else {
+		panic("build is neither arm nor avr")
+	}
+
+	if build.WithGcSections() {
+		arguments = append(arguments, "-Wl,--gc-sections")
+	}
+
 	write(file, "$(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)\n")
 	write(file, "\t@echo Building target: $@\n")
 	write(file, "\t%s", gcc)
 	write(
 		file,
-		" -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -mthumb -Wl,-Map=\"%s\" --specs=nano.specs -Wl,--start-group -lm  -Wl,--end-group %s -Wl,--gc-sections -mcpu=%s %s\n",
+		" -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map=\"%s\" %s %s %s\n",
 		build.OutputName("map"),
 		strings.Join(build.LinkerLibrarySearchPaths(), " "),
-		build.CoreSpecification(),
+		strings.Join(arguments, " "),
 		build.MiscellaneousLinkerFlags(),
 	)
 	if build.WithHex() {
@@ -268,22 +307,51 @@ func buildCommand(build builder.Build) string {
 	includes := build.IncludePaths()
 	symbols := build.DefSymbols()
 	opLevel := build.OptimizationLevel()
-	deviceDefine := fmt.Sprintf("-D%s", build.DeviceDefine())
-	coreSpec := fmt.Sprintf("-mcpu=%s", build.CoreSpecification())
 
-	warnAll := ""
+	arguments := []string{
+		"-std=gnu99",
+		"-ffunction-sections",
+	}
+
+	if build.DeviceDefine() != "" {
+		arguments = append(arguments, fmt.Sprintf("-D%s", build.DeviceDefine()))
+	}
+
+	if build.IsArm() {
+		arguments = append(
+			arguments,
+			fmt.Sprintf("-mcpu=%s", build.CoreSpecification()),
+			"-mlong-calls",
+		)
+	} else if build.IsAvr() {
+		arguments = append(
+			arguments,
+			fmt.Sprintf("-mmcu=%s", build.MmcuSpecification()),
+			"-funsigned-char",
+			"-funsigned-bitfields",
+			"-fdata-sections",
+			"-fshort-enums",
+			"-fno-strict-aliasing",
+			"-fno-jump-tables",
+		)
+
+		if build.WithPackStructureMembers() {
+			arguments = append(arguments, "-fpack-struct")
+		}
+	} else {
+		panic("build is neither arm nor avr")
+	}
+
 	if build.WithWarningAll() {
-		warnAll = "-Wall"
+		arguments = append(arguments, "-Wall")
 	}
 
 	return fmt.Sprintf(
-		"%s -x c -mthumb %s %s %s %s -ffunction-sections -mlong-calls %s %s -c -std=gnu99 -MD -MP -MF \"$(@:%%.o=%%.d)\" -MT\"$(@:%%.o=%%.d)\" -MT\"$(@:%%.o=%%.o)\" -o \"$@\" \"$<\" ",
+		"%s -x c %s %s %s %s -c -MD -MP -MF \"$(@:%%.o=%%.d)\" -MT\"$(@:%%.o=%%.d)\" -MT\"$(@:%%.o=%%.o)\" -o \"$@\" \"$<\" ",
 		toolchain.Executable("gcc"),
-		deviceDefine,
 		strings.Join(symbols, " "),
 		strings.Join(includes, " "),
+		strings.Join(arguments, " "),
 		opLevel,
-		warnAll,
-		coreSpec,
 	)
 }

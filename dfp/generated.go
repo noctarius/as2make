@@ -89,6 +89,7 @@ type Extension struct {
 	Tools         []Tool         `xml:"tool"`
 	Projects      []Project      `xml:"project"`
 	Prerequisites []Prerequisite `xml:"prerequisite"`
+	Properties    []Property     `xml:"property"`
 	Variants      []Variant      `xml:"variant"`
 	Interface     Interface      `xml:"interface"`
 	Pic           Pic            `xml:"pic"`
@@ -130,6 +131,11 @@ type Prerequisite struct {
 	Tcompiler string `xml:"Tcompiler,attr"`
 	Component string `xml:"component,attr"`
 	Version   string `xml:"version,attr"`
+}
+
+type Property struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:"value,attr"`
 }
 
 type Variant struct {

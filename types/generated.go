@@ -34,6 +34,24 @@ type Project struct {
 	Import         Import          `xml:"Import"`
 }
 
+func (p Project) IsArm() bool {
+	for _, propertyGroup := range p.PropertyGroups {
+		if propertyGroup.ToolchainSettings.ArmGcc != nil {
+			return true
+		}
+	}
+	return false
+}
+
+func (p Project) IsAvr() bool {
+	for _, propertyGroup := range p.PropertyGroups {
+		if propertyGroup.ToolchainSettings.AvrGcc != nil {
+			return true
+		}
+	}
+	return false
+}
+
 type PropertyGroup struct {
 	Condition                      string                         `xml:"Condition,attr"`
 	RootNamespace                  RootNamespace                  `xml:"RootNamespace"`
